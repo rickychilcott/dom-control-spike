@@ -4,7 +4,7 @@ class ApplicationController < ActionController::Base
     sleep(0.001)
 
     if admin?
-      subject.id % 2 == 0
+      subject.id.even?
     elsif editor?
       subject.id % 6 == 0
     else
