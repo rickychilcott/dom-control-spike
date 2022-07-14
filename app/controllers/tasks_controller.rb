@@ -6,10 +6,18 @@ class TasksController < ApplicationController
   end
 
   def generate_models
-    Resource.destroy_all
+    Resource.delete_all
 
-    count = (params[:resource_count] || 1000).to_i
-    count.to_i.times { Resource.create name: Faker::Company.catch_phrase }
+    count = (params[:resource_count] || 1_000).to_i
+
+    new_resources =
+      count.times.map do |index|
+        Resource
+          .new(name: Faker::Company.catch_phrase)
+          .attributes
+          .merge(updated_at: Time.now, created_at: Time.now)
+      end
+    Resource.insert_all(new_resources)
 
     resource_ids = Resource.pluck(:id)
 
