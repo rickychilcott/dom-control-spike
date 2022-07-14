@@ -2,11 +2,14 @@
   <ul data-level=<%= level %>>
     <% resource.children.each do |child| %>
       <li>
-        <% if can?(:edit, child) %>
+        <%# render DOMControl.new(check: :edit, resource: child) do %>
+        <DOMControl check='edit' resource='<%= dom_id(child) %>'>
           <%= link_to child.name, edit_resource_path(child) %>
-        <% else %>
+        </DOMControl>
+        <%# end %>
+        <DOMControl unless='edit' resource='<%= dom_id(child) %>'>
           <%= child.name %>
-        <% end %>
+        </DOMControl>
       </li>
       <%= render partial: "resource_with_children", locals: {resource: child, level: level + 1} %>
     <% end %>
