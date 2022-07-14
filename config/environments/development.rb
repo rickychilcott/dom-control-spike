@@ -1,6 +1,40 @@
 require "active_support/core_ext/integer/time"
 
 Rails.application.configure do
+  def autoreload_gem(gemname)
+    gem_path = Rails.root.join(gemname)
+
+    # Create a Zeitwerk class loader for each gem
+    gem_lib_path = gem_path.join('lib').join(gem_path.basename) # i.e. '.../format_gem/lib/format_gem'
+    gem_loader = Zeitwerk::Registry.loader_for_gem(gem_lib_path, warn_on_extra_files: false)
+    gem_loader.enable_reloading
+    gem_loader.setup
+
+    # Create a file watcher that will reload the gem classes when a file changes
+    file_watcher = ActiveSupport::FileUpdateChecker.new(gem_path.glob('**/*')) do
+      puts "file changed"
+      gem_loader.reload
+    end
+
+    config.to_prepare do
+      puts "to prepare"
+      file_watcher.execute_if_updated
+    end
+
+    Rails.application.reloaders << Class.new do
+      def initialize(file_watcher)
+        @file_watcher = file_watcher
+      end
+
+      def updated?
+        @file_watcher.execute_if_updated
+      end
+    end.new(file_watcher)
+  end
+
+  autoreload_gem 'dom_control'
+
+
   # Settings specified here will take precedence over those in config/application.rb.
 
   # In the development environment your application's code is reloaded any time
