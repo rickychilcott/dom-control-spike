@@ -1,6 +1,5 @@
 Rails.application.routes.draw do
-  # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
-
-  # Defines the root path route ("/")
-  # root "articles#index"
+  post "clear_cache" => "tasks#clear_cache"
+  resources :resources, except: [:show]
+  root "resources#index"
 end

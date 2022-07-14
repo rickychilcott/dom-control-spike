@@ -1,0 +1,14 @@
+<% cache(resource) do %>
+  <ul data-level=<%= level %>>
+    <% resource.children.each do |child| %>
+      <li>
+        <% if can?(:edit, child) %>
+          <%= link_to child.name, edit_resource_path(child) %>
+        <% else %>
+          <%= child.name %>
+        <% end %>
+      </li>
+      <%= render partial: "resource_with_children", locals: {resource: child, level: level + 1} %>
+    <% end %>
+  </ul>
+<% end %>

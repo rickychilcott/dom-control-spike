@@ -1,0 +1,36 @@
+<p style="color: green"><%= notice %></p>
+
+<div style="display: flex;">
+  <div>
+    <h1>Resources</h1>
+
+    <div id="resources">
+      <% @roots.each do |resource| %>
+        <%= render partial: "resource_with_children", locals: {resource: resource, level: 0} %>
+      <% end %>
+    </div>
+
+    <%= link_to "New resource", new_resource_path %>
+  </div>
+  <div>
+    <div>
+      <h2>Session</h2>
+      <ul>
+        <li>Role: <%= current_role %></li>
+        <li>Session ID: <%= session.id %></li>
+        <li>Switch to:
+          <%= link_to "Guest", root_url(role: :guest) %>
+          <%= link_to "Editor", root_url(role: :editor) %>
+          <%= link_to "Admin", root_url(role: :admin) %>
+        </li>
+      </ul>
+    </div>
+    <div>
+      <h2>Cache</h2>
+      <ul>
+        <li>Key Count: <%= Rails.cache.redis.keys.count %></li>
+        <li><%= button_to "Clear Cache", clear_cache_path %></li>
+      </ul>
+    </div>
+  </div>
+</div>
