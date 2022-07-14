@@ -2,7 +2,7 @@
 
 <div style="display: flex;">
   <div>
-    <h1>Resources</h1>
+    <h1>Resources (<%= Resource.count %>)</h1>
 
     <div id="resources">
       <% @roots.each do |resource| %>
@@ -30,6 +30,10 @@
       <ul>
         <li>Key Count: <%= Rails.cache.redis.keys.count %></li>
         <li><%= button_to "Clear Cache", clear_cache_path %></li>
+      </ul>
+      <h2>Other</h2>
+      <ul>
+        <li><%= button_to "Generate Models", generate_models_path %></li>
       </ul>
     </div>
   </div>

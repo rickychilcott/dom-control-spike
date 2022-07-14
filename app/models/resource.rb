@@ -1,3 +1,3 @@
 class Resource < ApplicationRecord
-  has_ancestry
+  has_ancestry touch: true
 end
