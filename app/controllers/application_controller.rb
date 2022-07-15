@@ -8,7 +8,7 @@ class ApplicationController < ActionController::Base
   end
 
   def can?(action, subject)
-    sleep(0.001)
+    sleep(check_speed.to_f) if check_speed.present?
 
     if admin?
       true
@@ -40,4 +40,12 @@ class ApplicationController < ActionController::Base
   end
 
   helper_method :can?, :admin?, :editor?, :guest?, :current_role
+
+  def check_speed
+    @check_speed ||= (params[:check_speed] || session[:check_speed])&.to_f
+  end
+  after_action do
+    session[:check_speed] = check_speed.to_f
+  end
+  helper_method :check_speed
 end

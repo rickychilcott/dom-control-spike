@@ -29,7 +29,7 @@
       <h2>Cache</h2>
       <ul>
         <li>Key Count: <%= Rails.cache.redis.keys.count %></li>
-        <li><%= button_to "Clear Cache", clear_cache_path %></li>
+        <li>Check Speed: <%= check_speed %></li>
         <li><%= button_to "Clear Cache", clear_cache_path, data: { turbo: false }  %></li>
       </ul>
       <h2>Other</h2>
