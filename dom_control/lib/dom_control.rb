@@ -6,4 +6,7 @@ module DomControl
   if defined?(Rails)
     require 'dom_control/engine'
   end
+endif defined?(Rails)
+if defined?(Rails)
+  require 'dom_control/rails'
 end

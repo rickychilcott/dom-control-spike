@@ -1,4 +1,11 @@
 class ApplicationController < ActionController::Base
+  include DomControl::Rails::ControllerExtensions # not entirely necessary, but helps with gem reloading
+
+  dom_control_check do |key, subject|
+    Rails.cache.fetch("domcontrol.check.#{key}.#{subject}.#{current_role}") do
+      can?(key, subject)
+    end
+  end
 
   def can?(action, subject)
     sleep(0.001)
