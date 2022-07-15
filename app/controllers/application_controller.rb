@@ -13,7 +13,13 @@ class ApplicationController < ActionController::Base
     if admin?
       true
     elsif editor?
-      subject.id % 6 == 0
+      subject_id = if subject.is_a? String
+        subject.split('_').compact.last&.to_i
+      else
+        subject.id
+      end
+
+      subject_id % 6 == 0
     else
       false
     end
