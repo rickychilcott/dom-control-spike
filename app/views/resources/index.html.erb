@@ -19,9 +19,9 @@
         <li>Role: <%= current_role %></li>
         <li>Session ID: <%= session.id %></li>
         <li>Switch to:
-          <%= link_to "Guest", root_url(role: :guest) %>
-          <%= link_to "Editor", root_url(role: :editor) %>
-          <%= link_to "Admin", root_url(role: :admin) %>
+          <%= link_to "Guest", root_url(role: :guest), data: { turbo: false } %>
+          <%= link_to "Editor", root_url(role: :editor), data: { turbo: false }  %>
+          <%= link_to "Admin", root_url(role: :admin), data: { turbo: false }  %>
         </li>
       </ul>
     </div>
@@ -30,10 +30,11 @@
       <ul>
         <li>Key Count: <%= Rails.cache.redis.keys.count %></li>
         <li><%= button_to "Clear Cache", clear_cache_path %></li>
+        <li><%= button_to "Clear Cache", clear_cache_path, data: { turbo: false }  %></li>
       </ul>
       <h2>Other</h2>
       <ul>
-        <li><%= button_to "Generate Models", generate_models_path %></li>
+        <li><%= button_to "Generate Models", generate_models_path, data: { turbo: false }  %></li>
       </ul>
     </div>
   </div>
