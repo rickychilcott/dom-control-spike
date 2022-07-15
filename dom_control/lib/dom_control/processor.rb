@@ -14,19 +14,12 @@ class DomControl::Processor
       doc = Nokogiri::HTML(html)
       nodes = doc.search('.//domcontrol')
       nodes.each do |node|
-        if node['check']
-          key       = node['check']
-          resource  = node['resource']
-          value     = check.call(key, resource)
+        key            = node['check'] || node['unless']
+        resource       = node['resource']
+        expected_value = node['check'].present?
+        value          = check.call(key, resource)
 
-          node.remove if value == false
-        elsif node['unless']
-          key       = node['unless']
-          resource  = node['resource']
-          value     = check.call(key, resource)
-
-          node.remove if value == true
-        end
+        node.remove if value != expected_value
       end
       doc.to_html
     end
