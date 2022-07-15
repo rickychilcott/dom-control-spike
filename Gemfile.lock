@@ -1,3 +1,8 @@
+PATH
+  remote: dom_control
+  specs:
+    dom_control (0.0.0)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -224,6 +229,7 @@ DEPENDENCIES
   bootsnap
   capybara
   debug
+  dom_control!
   faker (~> 2.21)
   importmap-rails
   memory_profiler (~> 1.0)
@@ -245,4 +251,4 @@ RUBY VERSION
    ruby 3.0.3p157
 
 BUNDLED WITH
-   2.3.10
+   2.3.17

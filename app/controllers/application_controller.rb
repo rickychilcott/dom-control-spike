@@ -1,12 +1,25 @@
 class ApplicationController < ActionController::Base
+  include DomControl::Rails::ControllerExtensions # not entirely necessary, but helps with gem reloading
+
+  dom_control_check do |key, subject|
+    Rails.cache.fetch("domcontrol.check.#{key}.#{subject}.#{current_role}") do
+      can?(key, subject)
+    end
+  end
 
   def can?(action, subject)
-    sleep(0.001)
+    sleep(check_speed.to_f) if check_speed.present?
 
     if admin?
       true
     elsif editor?
-      subject.id % 6 == 0
+      subject_id = if subject.is_a? String
+        subject.split('_').compact.last&.to_i
+      else
+        subject.id
+      end
+
+      subject_id % 6 == 0
     else
       false
     end
@@ -33,4 +46,12 @@ class ApplicationController < ActionController::Base
   end
 
   helper_method :can?, :admin?, :editor?, :guest?, :current_role
+
+  def check_speed
+    @check_speed ||= (params[:check_speed] || session[:check_speed])&.to_f
+  end
+  after_action do
+    session[:check_speed] = check_speed.to_f
+  end
+  helper_method :check_speed
 end

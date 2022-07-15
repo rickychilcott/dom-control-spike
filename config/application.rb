@@ -31,9 +31,5 @@ module DomControlSpike
     #
     # config.time_zone = "Central Time (US & Canada)"
     # config.eager_load_paths << Rails.root.join("extras")
-
-    require Rails.root.join('app/middlewares/dom_control')
-
-    config.middleware.use DomControl::Middleware
   end
 end

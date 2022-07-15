@@ -7,6 +7,6 @@ class DomControl::Middleware
 
   def call(env = {})
     response = app.call(env)
-    DomControl::Processor.process_response(response)
+    DomControl::Processor.process_response(env, response)
   end
 end

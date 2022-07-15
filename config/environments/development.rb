@@ -1,6 +1,40 @@
 require "active_support/core_ext/integer/time"
 
 Rails.application.configure do
+  def autoreload_gem(gemname)
+    gem_path = Rails.root.join(gemname)
+
+    # Create a Zeitwerk class loader for each gem
+    gem_lib_path = gem_path.join('lib').join(gem_path.basename) # i.e. '.../format_gem/lib/format_gem'
+    gem_loader = Zeitwerk::Registry.loader_for_gem(gem_lib_path, warn_on_extra_files: false)
+    gem_loader.enable_reloading
+    gem_loader.setup
+
+    # Create a file watcher that will reload the gem classes when a file changes
+    file_watcher = ActiveSupport::FileUpdateChecker.new(gem_path.glob('**/*')) do
+      puts "file changed"
+      gem_loader.reload
+    end
+
+    config.to_prepare do
+      puts "to prepare"
+      file_watcher.execute_if_updated
+    end
+
+    Rails.application.reloaders << Class.new do
+      def initialize(file_watcher)
+        @file_watcher = file_watcher
+      end
+
+      def updated?
+        @file_watcher.execute_if_updated
+      end
+    end.new(file_watcher)
+  end
+
+  autoreload_gem 'dom_control'
+
+
   # Settings specified here will take precedence over those in config/application.rb.
 
   # In the development environment your application's code is reloaded any time
@@ -19,11 +53,12 @@ Rails.application.configure do
 
   # Enable/disable caching. By default caching is disabled.
   # Run rails dev:cache to toggle caching.
-  if Rails.root.join("tmp/caching-dev.txt").exist?
+  if true # Rails.root.join("tmp/caching-dev.txt").exist?
     config.action_controller.perform_caching = true
     config.action_controller.enable_fragment_cache_logging = true
 
-    config.cache_store = :memory_store
+    # config.cache_store = :memory_store
+    config.cache_store = :redis_cache_store, { url: ENV['REDIS_URL'] || "redis://localhost:6379" }
     config.public_file_server.headers = {
       "Cache-Control" => "public, max-age=#{2.days.to_i}"
     }
@@ -64,6 +99,4 @@ Rails.application.configure do
 
   # Uncomment if you wish to allow Action Cable access from any origin.
   # config.action_cable.disable_request_forgery_protection = true
-
-  config.cache_store = :redis_cache_store, { url: ENV['REDIS_URL'] || "redis://localhost:6379" }
 end

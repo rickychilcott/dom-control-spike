@@ -13,6 +13,7 @@ class ResourcesController < ApplicationController
 
   # GET /resources/1/edit
   def edit
+    raise "ON NO!" unless can?(:edit, @resource)
   end
 
   # POST /resources
