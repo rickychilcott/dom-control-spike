@@ -1,6 +1,9 @@
 module DomControl::Rails::ControllerExtensions
   extend ActiveSupport::Concern
 
+  included do
+    helper DomControl::Rails::ViewHelpers
+  end
 
   class_methods do
     def dom_control_check(&block)
