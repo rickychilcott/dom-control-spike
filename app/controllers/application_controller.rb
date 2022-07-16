@@ -1,9 +1,26 @@
 class ApplicationController < ActionController::Base
   include DomControl::Rails::ControllerExtensions # not entirely necessary, but helps with gem reloading
 
-  dom_control_check do |key, subject|
-    Rails.cache.fetch("domcontrol.check.#{key}.#{subject}.#{current_role}") do
-      can?(key, subject)
+  def dom_control_cache_key(check)
+    [:domcontrol, :check, check.key, check.resource, current_role].join(".")
+  end
+
+  dom_control_check do |check|
+    cache_key = dom_control_cache_key(check)
+
+    check.value =
+      Rails.cache.fetch(cache_key) do
+        can?(check.key, check.resource)
+      end
+  end
+
+  dom_control_check_multi do |checks|
+    cache_keys = checks.map { |check| dom_control_cache_key(check) }
+    cache_checks = Rails.cache.read_multi(*cache_keys)
+
+    checks.each do |check|
+      cache_key = dom_control_cache_key(check)
+      check.value = cache_checks[cache_key]
     end
   end
 
